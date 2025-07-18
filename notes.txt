@@ -1,0 +1,112 @@
+Explicação rápida:
+
+express: servidor
+
+mongoose: conecta ao MongoDB
+
+dotenv: para variáveis de ambiente
+
+bcryptjs: criptografar senhas
+
+jsonwebtoken: autenticação com JWT
+
+cors: permitir que o app React Native consuma a API
+__________________________________________________________________________________________________________________________________
+
+Um middleware é basicamente uma função que intercepta a requisição (request) antes que ela chegue na rota final. Ele pode:
+Modificar a requisição (req) ou a resposta (res)
+Verificar permissões (autenticação, por exemplo)
+Validar dados
+Fazer logs
+Ou simplesmente passar para o próximo com next()
+
+✅ Tipos comuns de middleware no Express
+Tipo	Exemplo
+Logger	morgan ou middleware próprio
+Parser de JSON	express.json()
+Autenticação	Seu autenticarToken
+Middleware global	app.use()
+Tratamento de erros	Middleware com 4 parâmetros (err)
+__________________________________________________________________________________________________________________________________
+
+Integração do MongoDB
+
+Por que integrar agora:
+Evita retrabalho: já adapta suas rotas e estrutura pro Mongo.
+Testa a autenticação real: com usuários salvos de verdade.
+Facilita a transição: sai dos dados mock e já grava/busca no banco.
+Você já tá com tudo pronto: rotas, token, login... só trocar o mock pelo User.find() etc.
+__________________________________________________________________________________________________________________________________
+
+routes/userRoutes.js → define as rotas HTTP (o que acontece quando o front chama /api/users, por exemplo).
+
+models/User.js → define a estrutura do usuário no MongoDB (campos, validações etc).
+__________________________________________________________________________________________________________________________________
+
+Plano de Rotas:
+
+🔹 1. Autenticação
+POST /api/auth/login ✅ (já feito)
+
+🔹 2. Usuários
+GET /api/users — listar todos os usuários ✅
+
+GET /api/users/:id — buscar usuário por ID
+
+POST /api/users — criar novo usuário
+
+PUT /api/users/:id — atualizar usuário
+
+DELETE /api/users/:id — remover usuário
+
+🔹 3. Automóveis (admin.automoveis)
+GET /api/automoveis — listar anúncios de automóveis
+
+GET /api/automoveis/:id — buscar automóvel por ID
+
+POST /api/automoveis — criar novo anúncio
+
+PUT /api/automoveis/:id — atualizar anúncio
+
+DELETE /api/automoveis/:id — remover anúncio
+
+🔹 4. Imóveis (admin.imoveis)
+GET /api/imoveis
+
+GET /api/imoveis/:id
+
+POST /api/imoveis
+
+PUT /api/imoveis/:id
+
+DELETE /api/imoveis/:id
+
+🔹 5. Prestadores de Serviço (admin.prestadores)
+GET /api/servicos
+
+GET /api/servicos/:id
+
+POST /api/servicos
+
+PUT /api/servicos/:id
+
+DELETE /api/servicos/:id
+
+🔹 6. Avaliações (config.estrelas)
+GET /api/avaliacoes
+
+POST /api/avaliacoes
+
+GET /api/avaliacoes/:id
+
+🔹 7. Notificações (config.notificacao)
+GET /api/notificacoes/:userId
+
+🔹 8. Atividades de Usuário (admin.user_activity)
+GET /api/atividades/:userId
+
+🔹 9. Transações Financeiras (dinheiro.transição)
+GET /api/transacoes/:userId
+
+POST /api/transacoes
+
