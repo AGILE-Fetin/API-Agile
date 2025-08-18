@@ -11,4 +11,4 @@ const TransacaoSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model('Transacao', TransacaoSchema, 'dinheiro.transição');
+module.exports = mongoose.model('Transacao', TransacaoSchema, 'transacoes');

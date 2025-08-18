@@ -2,7 +2,11 @@ const Imovel = require('../models/Imovel');
 
 exports.criarImovel = async (req, res) => {
   try {
-    const novo = new Imovel(req.body);
+    const imovelData = {
+      ...req.body,
+      postedBy: req.user.id
+    };
+    const novo = new Imovel(imovelData);
     const salvo = await novo.save();
     res.status(201).json(salvo);
   } catch (error) {

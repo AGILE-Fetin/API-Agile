@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
 
 const AutomovelSchema = new mongoose.Schema({
-  title: String,
-  description: String,
+  title: { type: String, required: true, maxlength: 200 },
+  description: { type: String, required: true, maxlength: 2000 },
   imagesUrls: [String],
   videoUrl: String,
-  postedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  listingType: String,
-  status: String,
+  postedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  listingType: { type: String, required: true },
+  status: { type: String, required: true },
   location: {
     fullAddress: String,
     city: String,

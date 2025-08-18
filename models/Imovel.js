@@ -8,11 +8,11 @@ const locationSchema = new mongoose.Schema({
 }, { _id: false });
 
 const imovelDetailsSchema = new mongoose.Schema({
-  type: String, // ex: apartamento, casa, terreno, etc
+  type: String,
   bedrooms: Number,
   bathrooms: Number,
   parkingSpaces: Number,
-  area: Number, // em m²
+  area: Number,
   price: Number,
   rentPrice: Number,
   condoFee: Number,

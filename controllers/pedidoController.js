@@ -1,12 +1,17 @@
-const Pedido = require('../models/Pedido');
+const Pedido = require('../models/Pedido'); // Modelo de Pedido
 
 // Criar novo pedido
 exports.createPedido = async (req, res) => {
   try {
-    const pedido = new Pedido(req.body);
+    const pedidoData = {
+      ...req.body,
+      userId: req.user.id
+    };
+    const pedido = new Pedido(pedidoData);
     const savedPedido = await pedido.save();
     res.status(201).json(savedPedido);
   } catch (error) {
+    console.error('❌ Erro ao criar pedido:', error);
     res.status(400).json({ message: 'Erro ao criar pedido', error: error.message });
   }
 };
@@ -16,7 +21,13 @@ exports.getPedidos = async (req, res) => {
   try {
     const filter = {};
     if (req.query.userId) filter.userId = req.query.userId;
-    const pedidos = await Pedido.find(filter).populate('userId', 'fullName email').populate('items.productId', 'title price');
+    const pedidos = await Pedido.find(filter).populate('userId', 'fullName email').populate({
+  path: 'items.productId',
+  select: 'title price',
+  strictPopulate: false, // evita erro se o modelo não existir no momento
+  options: { lean: true }
+  });
+
     res.json(pedidos);
   } catch (error) {
     res.status(500).json({ message: 'Erro ao buscar pedidos', error: error.message });

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pedidoController = require('../controllers/pedidoController');
 const autenticarToken = require('../middlewares/authMiddleware');
+const csrfProtection = require('../middlewares/csrfMiddleware');
 
 // Criar novo pedido
 router.post('/', autenticarToken, pedidoController.createPedido);

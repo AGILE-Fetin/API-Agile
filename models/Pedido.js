@@ -1,9 +1,16 @@
 const mongoose = require('mongoose');
 
 const PedidoItemSchema = new mongoose.Schema({
-  productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
-  quantity: { type: Number, required: true, min: 1 },
-  price: { type: Number, required: true, min: 0 }
+  productId: {
+    type: mongoose.Schema.Types.ObjectId,
+    refPath: 'items.productModel'
+  },
+  productModel: {
+    type: String,
+    enum: ['Automovel', 'Imovel', 'Servico', 'Prestador']
+  },
+  quantity: Number,
+  price: Number
 }, { _id: false });
 
 const AddressSchema = new mongoose.Schema({
@@ -14,21 +21,21 @@ const AddressSchema = new mongoose.Schema({
   city: String,
   state: String,
   zipCode: String,
-  country: String,
+  country: String
 }, { _id: false });
 
 const PedidoSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  items: { type: [PedidoItemSchema], required: true },
-  totalAmount: { type: Number, required: true, min: 0 },
-  status: { 
-    type: String, 
-    enum: ['Pendente', 'Aprovado', 'Cancelado', 'Entregue'], 
-    default: 'Pendente' 
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  items: [PedidoItemSchema],
+  totalAmount: Number,
+  status: {
+    type: String,
+    enum: ['Pendente', 'Aprovado', 'Cancelado', 'Entregue'],
+    default: 'Pendente'
   },
-  paymentMethod: { type: String },
+  paymentMethod: String,
   deliveryAddress: AddressSchema,
-  notes: { type: String },
+  notes: String
 }, { timestamps: true });
 
 module.exports = mongoose.model('Pedido', PedidoSchema);

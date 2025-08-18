@@ -10,15 +10,19 @@ exports.getAll = async (req, res) => {
   }
 };
 
-// Criar novo
 exports.create = async (req, res) => {
   try {
-    const novo = new Automovel(req.body);
+    const automovelData = {
+      ...req.body,
+      postedBy: req.user.id
+    };
+    const novo = new Automovel(automovelData);
     const salvo = await novo.save();
+
     res.status(201).json(salvo);
   } catch (err) {
-    console.error('Erro ao criar automóvel:', err);
-    res.status(400).json({ message: 'Erro ao criar automóvel', erro: err.message, stack: err.stack });
+    console.error('❌ Erro ao criar automóvel:', err);
+    res.status(400).json({ message: 'Erro ao criar automóvel', erro: err.message });
   }
 };
 

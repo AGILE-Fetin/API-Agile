@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const authMiddleware = require('../middlewares/authMiddleware');
 
 // Dados fictícios (mock)
 const produtosFake = [
@@ -8,8 +9,12 @@ const produtosFake = [
 ];
 
 // GET /api/produtos
-router.get('/', (req, res) => {
-  res.json(produtosFake); // retorna os dados falsos
+router.get('/', authMiddleware, (req, res) => {
+  try {
+    res.json(produtosFake);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro interno do servidor' });
+  }
 });
 
 module.exports = router;

@@ -1,49 +1,19 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcryptjs'); // Já está certo
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const { register, login, getProfile } = require('../controllers/authController');
+const authMiddleware = require('../middlewares/authMiddleware');
+const csrfProtection = require('../middlewares/csrfMiddleware');
+const { authRateLimit } = require('../middlewares/rateLimitMiddleware');
+const { validateRegister, validateLogin } = require('../middlewares/validationMiddleware');
 
-// POST /api/auth/login
-router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+// Rotas públicas
+router.post('/register', authRateLimit, validateRegister, register);
+router.post('/login', authRateLimit, validateLogin, login);
 
-  console.log('📩 Dados recebidos:', { email, password });
+// Rota protegida
+router.get('/profile', authMiddleware, getProfile);
 
-  try {
-    const usuario = await User.findOne({ email });
-    console.log('🔍 Usuário encontrado:', usuario);
-
-    if (!usuario) {
-      return res.status(401).json({ message: 'Usuário não encontrado' });
-    }
-
-    // ⛏️ Aqui é onde estava o erro!
-    const senhaValida = await bcrypt.compare(password, usuario.password);
-    console.log('🔐 Senha válida?', senhaValida);
-
-    if (!senhaValida) {
-      return res.status(401).json({ message: 'Senha inválida' });
-    }
-
-    const token = jwt.sign(
-      { id: usuario._id, email: usuario.email },
-      process.env.JWT_SECRET,
-      { expiresIn: '1h' }
-    );
-
-    res.json({
-      token,
-      usuario: {
-        id: usuario._id,
-        nome: usuario.fullName,
-        email: usuario.email,
-        roles: usuario.roles
-      }
-    });
-  } catch (error) {
-    res.status(500).json({ message: 'Erro interno', erro: error.message });
-  }
-});
+// Rota para obter token CSRF
+router.get('/csrf-token', csrfProtection.getToken);
 
 module.exports = router;

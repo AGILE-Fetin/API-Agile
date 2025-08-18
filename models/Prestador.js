@@ -9,7 +9,7 @@ const LocationSchema = new mongoose.Schema({
 
 const ServiceDetailsSchema = new mongoose.Schema({
   serviceCategory: String,
-  averagePrice: String,
+  averagePrice: Number,
   estimatedExecutionTime: String,
   servicePortfolioImages: [String],
 }, { _id: false });
