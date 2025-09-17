@@ -406,7 +406,6 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para de
 ## 📞 Suporte
 
 - 📧 Email: suporte@fetin.com
-- 📱 WhatsApp: (35) 99999-9999
 - 🌐 Site: https://fetin.com
 
 ---
