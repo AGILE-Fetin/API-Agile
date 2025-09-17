@@ -1,4 +1,4 @@
-# 🚀 FETIN API - Marketplace Completo
+# 🚀 FETIN API - AGILE
 
 API REST completa para marketplace com sistema de pagamentos PIX, autenticação segura e múltiplos módulos.
 
