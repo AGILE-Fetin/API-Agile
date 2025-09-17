@@ -20,8 +20,8 @@ describe('Testes Básicos', () => {
     const res = await request(app)
       .post('/api/auth/register')
       .send({
-        email: 'teste@exemplo.com',
-        password: '123456',
+        email: process.env.TEST_EMAIL || 'teste@exemplo.com',
+        password: process.env.TEST_PASSWORD || '123456',
         fullName: 'Usuário Teste'
       });
 

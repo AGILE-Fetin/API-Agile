@@ -1,490 +1,380 @@
-# 📚 Documentação da API - FETIN
+# 📚 FETIN API - Documentação Técnica Completa
 
-## 🚀 Visão Geral
+## 🎯 Visão Geral
 
-API RESTful para plataforma de marketplace que permite gerenciar usuários, automóveis, imóveis, serviços, prestadores, pedidos, transações, notificações e avaliações.
+A FETIN API é uma solução completa de marketplace que oferece:
+- Sistema de pagamentos PIX integrado
+- Autenticação segura com JWT
+- CRUD completo para múltiplos módulos
+- Proteções de segurança avançadas
+- Testes automatizados abrangentes
 
-**Base URL:** `http://localhost:5000/api`
+## 🏗️ Arquitetura
 
-## 🔧 Configuração
-
-### Variáveis de Ambiente
-```env
-MONGODB_URI=mongodb://localhost:27017/Agile
-JWT_SECRET=chave_super_secreta_123
-PORT=5000
-NODE_ENV=development
-FRONTEND_URL=http://localhost:3000
+```
+API/
+├── config/          # Configurações (DB, etc)
+├── controllers/     # Lógica de negócio
+├── middlewares/     # Middlewares (auth, security, etc)
+├── models/          # Modelos do MongoDB
+├── routes/          # Definição de rotas
+├── tests/           # Testes automatizados
+├── index.js         # Aplicação principal
+└── server.js        # Servidor HTTP
 ```
 
-### Instalação
-```bash
-npm install
-npm start          # Produção
-npm run dev        # Desenvolvimento
-npm test           # Executar testes
-```
+## 🔐 Sistema de Autenticação
 
-## 🔐 Autenticação
+### **Fluxo de Autenticação**
+1. **Registro** → Gera JWT token
+2. **Login** → Valida credenciais + retorna token
+3. **Requests** → Token no header `Authorization: Bearer <token>`
 
-A API utiliza JWT (JSON Web Tokens) para autenticação. Inclua o token no header:
-```
-Authorization: Bearer <token>
-```
-
----
-
-## 📋 Endpoints
-
-### 🔑 Autenticação (`/api/auth`)
-
-#### POST `/api/auth/register`
-Registra um novo usuário.
-
-**Body:**
-```json
-{
-  "email": "usuario@exemplo.com",
-  "password": "senha123",
-  "fullName": "Nome Completo"
-}
-```
-
-**Response (201):**
-```json
-{
-  "token": "jwt_token_aqui",
-  "user": {
-    "_id": "user_id",
-    "email": "usuario@exemplo.com",
-    "fullName": "Nome Completo",
-    "roles": ["cliente"]
-  }
-}
-```
-
-#### POST `/api/auth/login`
-Autentica um usuário existente.
-
-**Body:**
-```json
-{
-  "email": "usuario@exemplo.com",
-  "password": "senha123"
-}
-```
-
-**Response (200):**
-```json
-{
-  "token": "jwt_token_aqui",
-  "user": {
-    "_id": "user_id",
-    "email": "usuario@exemplo.com",
-    "fullName": "Nome Completo"
-  }
-}
-```
-
-#### GET `/api/auth/profile` 🔒
-Retorna dados do usuário autenticado.
-
-**Headers:** `Authorization: Bearer <token>`
-
-**Response (200):**
-```json
-{
-  "_id": "user_id",
-  "email": "usuario@exemplo.com",
-  "fullName": "Nome Completo",
-  "roles": ["cliente"],
-  "createdAt": "2024-01-01T00:00:00.000Z"
-}
-```
-
----
-
-### 👥 Usuários (`/api/users`)
-
-#### GET `/api/users` 🔒
-Lista todos os usuários.
-
-**Response (200):**
-```json
-[
-  {
-    "_id": "user_id",
-    "email": "usuario@exemplo.com",
-    "fullName": "Nome Completo",
-    "roles": ["cliente"]
-  }
-]
-```
-
-#### PUT `/api/users/:id` 🔒
-Atualiza dados do usuário.
-
-**Body:**
-```json
-{
-  "fullName": "Novo Nome",
-  "phone": "(11) 99999-9999"
-}
-```
-
-#### DELETE `/api/users/:id` 🔒
-Remove um usuário.
-
-**Response (200):**
-```json
-{
-  "message": "Usuário deletado com sucesso"
-}
-```
-
----
-
-### 🚗 Automóveis (`/api/automoveis`)
-
-#### GET `/api/automoveis`
-Lista todos os automóveis.
-
-**Response (200):**
-```json
-[
-  {
-    "_id": "automovel_id",
-    "title": "Fiat Uno 2012",
-    "description": "Carro econômico",
-    "listingType": "venda",
-    "status": "ativo",
-    "automobileDetails": {
-      "make": "Fiat",
-      "model": "Uno",
-      "year": 2012,
-      "price": 18000
-    }
-  }
-]
-```
-
-#### POST `/api/automoveis` 🔒
-Cria um novo automóvel.
-
-**Body:**
-```json
-{
-  "title": "Fiat Uno 2012",
-  "description": "Carro econômico e bem conservado",
-  "imagesUrls": ["https://exemplo.com/foto.jpg"],
-  "listingType": "venda",
-  "status": "ativo",
-  "location": {
-    "city": "São Paulo",
-    "state": "SP",
-    "zipCode": "01000-000"
-  },
-  "automobileDetails": {
-    "make": "Fiat",
-    "model": "Uno",
-    "yearManufacture": 2012,
-    "mileage": 85000,
-    "fuelType": "Flex",
-    "transmission": "Manual",
-    "color": "Branco",
-    "price": 18000
-  }
-}
-```
-
-#### GET `/api/automoveis/:id`
-Busca automóvel por ID.
-
-#### PUT `/api/automoveis/:id` 🔒
-Atualiza automóvel.
-
-#### DELETE `/api/automoveis/:id` 🔒
-Remove automóvel.
-
----
-
-### 🏠 Imóveis (`/api/imoveis`)
-
-#### GET `/api/imoveis`
-Lista todos os imóveis.
-
-#### POST `/api/imoveis` 🔒
-Cria um novo imóvel.
-
-**Body:**
-```json
-{
-  "title": "Apartamento Luxo",
-  "description": "Apartamento bem localizado",
-  "imagesUrls": ["https://exemplo.com/foto.jpg"],
-  "listingType": "venda",
-  "status": "ativo",
-  "location": {
-    "fullAddress": "Rua Central, 123",
-    "city": "Belo Horizonte",
-    "state": "MG",
-    "zipCode": "30140-002"
-  },
-  "imovelDetails": {
-    "type": "apartamento",
-    "bedrooms": 3,
-    "bathrooms": 2,
-    "area": 120,
-    "price": 650000,
-    "condoFee": 500,
-    "furnished": true
-  }
-}
-```
-
-#### GET `/api/imoveis/:id`
-#### PUT `/api/imoveis/:id` 🔒
-#### DELETE `/api/imoveis/:id` 🔒
-
----
-
-### 🔧 Serviços (`/api/servicos`)
-
-#### GET `/api/servicos`
-Lista todos os serviços.
-
-#### POST `/api/servicos` 🔒
-Cria um novo serviço.
-
-**Body:**
-```json
-{
-  "title": "Serviço de Jardinagem",
-  "description": "Corte de grama, poda e manutenção",
-  "category": "Jardinagem",
-  "price": 150,
-  "location": {
-    "city": "Belo Horizonte",
-    "state": "MG",
-    "zipCode": "30100-000"
-  },
-  "imagesUrls": ["https://exemplo.com/jardim.jpg"]
-}
-```
-
-#### GET `/api/servicos/:id`
-#### PUT `/api/servicos/:id` 🔒
-#### DELETE `/api/servicos/:id` 🔒
-
----
-
-### 👷 Prestadores (`/api/prestadores`)
-
-#### GET `/api/prestadores`
-Lista todos os prestadores.
-
-#### POST `/api/prestadores` 🔒
-Cria um novo prestador.
-
-**Body:**
-```json
-{
-  "title": "Empresa XPTO",
-  "description": "Serviços de construção civil",
-  "listingType": "empresa",
-  "status": "ativo",
-  "location": {
-    "fullAddress": "Rua Exemplo, 123",
-    "city": "São Paulo",
-    "state": "SP",
-    "zipCode": "01234-567"
-  },
-  "serviceDetails": {
-    "serviceCategory": "Construção",
-    "averagePrice": "1000",
-    "estimatedExecutionTime": "30 dias"
-  }
-}
-```
-
-#### GET `/api/prestadores/:id`
-#### PUT `/api/prestadores/:id` 🔒
-#### DELETE `/api/prestadores/:id` 🔒
-
----
-
-### 📦 Pedidos (`/api/pedidos`)
-
-#### GET `/api/pedidos` 🔒
-Lista pedidos do usuário.
-
-#### POST `/api/pedidos` 🔒
-Cria um novo pedido.
-
-**Body:**
-```json
-{
-  "items": [
-    {
-      "productId": "product_id",
-      "productModel": "Imovel",
-      "quantity": 1,
-      "price": 250000
-    }
-  ],
-  "totalAmount": 250000,
-  "paymentMethod": "Cartão",
-  "deliveryAddress": {
-    "street": "Rua Exemplo",
-    "city": "São Paulo",
-    "state": "SP",
-    "zipCode": "01000-000"
-  }
-}
-```
-
-#### GET `/api/pedidos/:id` 🔒
-#### PUT `/api/pedidos/:id` 🔒
-#### DELETE `/api/pedidos/:id` 🔒
-
----
-
-### 💳 Transações (`/api/transacoes`)
-
-#### GET `/api/transacoes` 🔒
-Lista transações do usuário.
-
-#### POST `/api/transacoes` 🔒
-Cria uma nova transação.
-
-**Body:**
-```json
-{
-  "pedidoId": "pedido_id",
-  "valor": 250000,
-  "metodoPagamento": "Cartão"
-}
-```
-
-#### GET `/api/transacoes/:id` 🔒
-#### PUT `/api/transacoes/:id` 🔒
-#### DELETE `/api/transacoes/:id` 🔒
-
----
-
-### 🔔 Notificações (`/api/notificacoes`)
-
-#### GET `/api/notificacoes` 🔒
-Lista notificações do usuário.
-
-#### POST `/api/notificacoes` 🔒
-Cria uma nova notificação.
-
-**Body:**
-```json
-{
-  "titulo": "Nova mensagem",
-  "mensagem": "Você recebeu uma nova mensagem",
-  "tipo": "info",
-  "lida": false
-}
-```
-
-#### GET `/api/notificacoes/:id` 🔒
-#### PUT `/api/notificacoes/:id` 🔒
-#### DELETE `/api/notificacoes/:id` 🔒
-
----
-
-### ⭐ Avaliações (`/api/estrelas`)
-
-#### GET `/api/estrelas` 🔒
-Lista avaliações.
-
-#### POST `/api/estrelas` 🔒
-Cria uma nova avaliação.
-
-**Body:**
-```json
-{
-  "produtoId": "product_id",
-  "produtoModelo": "Automovel",
-  "nota": 5,
-  "comentario": "Excelente produto!"
-}
-```
-
-#### GET `/api/estrelas/:id` 🔒
-#### PUT `/api/estrelas/:id` 🔒
-#### DELETE `/api/estrelas/:id` 🔒
-
----
-
-## 📊 Códigos de Status HTTP
-
-| Código | Descrição |
-|--------|-----------|
-| 200 | Sucesso |
-| 201 | Criado com sucesso |
-| 400 | Requisição inválida |
-| 401 | Não autorizado |
-| 403 | Acesso negado |
-| 404 | Não encontrado |
-| 500 | Erro interno do servidor |
-
-## 🔒 Middleware de Segurança
-
-- **Rate Limiting**: Limite de requisições por IP
-- **CORS**: Configurado para frontend específico
-- **Helmet**: Headers de segurança
-- **JWT**: Autenticação baseada em tokens
-- **Validação**: Validação de dados de entrada
-
-## 🧪 Testes
-
-Execute os testes com:
-```bash
-npm test                # Todos os testes
-npm run test:basic      # Testes básicos
-npm run test:coverage   # Com cobertura
-```
-
-**Cobertura atual:** 50 testes passando em 11 suites
-
-## 📝 Exemplos de Uso
-
-### Fluxo completo de autenticação:
+### **Middleware de Autenticação**
 ```javascript
-// 1. Registrar usuário
-const registerResponse = await fetch('/api/auth/register', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    email: 'user@example.com',
-    password: 'password123',
-    fullName: 'João Silva'
-  })
-});
+// Todas as rotas protegidas usam:
+const autenticarToken = require('./middlewares/authMiddleware');
 
-// 2. Usar token para requisições autenticadas
-const token = registerResponse.token;
-const profileResponse = await fetch('/api/auth/profile', {
-  headers: { 'Authorization': `Bearer ${token}` }
+// Validação automática de:
+// - Presença do token
+// - Validade do token
+// - Estrutura do token
+// - Expiração
+```
+
+### **Roles de Usuário**
+- `cliente` - Usuário padrão
+- `vendedor` - Pode vender produtos
+- `prestador` - Oferece serviços
+- `admin` - Acesso administrativo
+
+## 💳 Sistema PIX - Detalhes Técnicos
+
+### **Geração de Código PIX**
+```javascript
+// Formato EMV (Europay, Mastercard, Visa)
+const gerarCodigoPix = (dados) => {
+  let codigo = '';
+  codigo += '000201';                    // Payload Format Indicator
+  codigo += '010212';                    // Point of Initiation Method
+  codigo += `26${chavePixFormatada}`;    // Merchant Account Information
+  codigo += '52040000';                  // Merchant Category Code
+  codigo += '5303986';                   // Transaction Currency (BRL)
+  codigo += `54${valor}`;                // Transaction Amount
+  codigo += '5802BR';                    // Country Code
+  codigo += `59${merchantName}`;         // Merchant Name
+  codigo += `60${merchantCity}`;         // Merchant City
+  codigo += '6304';                      // CRC16 (simplificado)
+  return codigo;
+};
+```
+
+### **QR Code**
+- **Biblioteca**: `qrcode`
+- **Formato**: Base64 Data URL
+- **Tamanho**: 300x300px
+- **Margem**: 2px
+
+## 🛡️ Segurança Implementada
+
+### **1. Proteção CSRF**
+```javascript
+// Middleware CSRF
+const csrfProtection = {
+  generateToken: (req, res, next) => { /* ... */ },
+  validateToken: (req, res, next) => { /* ... */ }
+};
+
+// Aplicado em todas as rotas POST/PUT/DELETE
+router.post('/', auth, csrf.validateToken, controller.create);
+```
+
+### **2. Rate Limiting**
+```javascript
+// 100 requests por 15 minutos
+const rateLimit = require('express-rate-limit');
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 100 // máximo 100 requests
 });
+```
+
+### **3. Mass Assignment Protection**
+```javascript
+// Whitelist de campos permitidos
+const allowedFields = ['title', 'description', 'price'];
+const updateData = {};
+
+allowedFields.forEach(field => {
+  if (req.body[field] !== undefined) {
+    updateData[field] = req.body[field];
+  }
+});
+```
+
+### **4. Validação de Dados**
+```javascript
+// ObjectId validation
+const validateObjectId = (id) => {
+  return mongoose.Types.ObjectId.isValid(id);
+};
+
+// Email validation
+const validateEmail = (email) => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
+```
+
+## 📊 Modelos de Dados
+
+### **User Schema**
+```javascript
+{
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  fullName: { type: String, required: true },
+  roles: { type: [String], default: ['cliente'] },
+  phone: String,
+  address: AddressSchema,
+  sellerInfo: { /* dados do vendedor */ },
+  serviceProviderInfo: { /* dados do prestador */ },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+}
+```
+
+### **Transacao Schema (PIX)**
+```javascript
+{
+  userId: { type: ObjectId, ref: 'User', required: true },
+  type: { type: String, enum: ['pix', 'credit_card'], required: true },
+  currency: { type: String, enum: ['BRL'], default: 'BRL' },
+  amount: { type: Number, required: true, min: 0.01 },
+  status: { 
+    type: String, 
+    enum: ['pending', 'completed', 'failed'], 
+    default: 'pending' 
+  },
+  paymentGatewayTransactionId: String,
+  createdAt: { type: Date, default: Date.now }
+}
+```
+
+## 🔄 Fluxos de Negócio
+
+### **Fluxo PIX Completo**
+```mermaid
+sequenceDiagram
+    Frontend->>API: POST /api/csrf-token
+    API->>Frontend: { csrfToken }
+    Frontend->>API: POST /api/pix/gerar + CSRF
+    API->>API: Validar dados
+    API->>API: Gerar código PIX
+    API->>API: Gerar QR Code
+    API->>Frontend: { codigoPix, qrCode }
+    Frontend->>User: Exibir QR + Código
+    User->>Bank: Pagar PIX
+    Frontend->>API: GET /api/pix/status/:id
+    API->>Frontend: { status: 'pago' }
+```
+
+### **Fluxo de Autenticação**
+```mermaid
+sequenceDiagram
+    Frontend->>API: POST /api/auth/login
+    API->>DB: Validar credenciais
+    DB->>API: Usuário válido
+    API->>API: Gerar JWT token
+    API->>Frontend: { token, user }
+    Frontend->>API: Requests com Bearer token
+    API->>API: Validar token
+    API->>Frontend: Dados solicitados
+```
+
+## 🧪 Estratégia de Testes
+
+### **Estrutura de Testes**
+```
+tests/
+├── setup.js           # Configuração global
+├── auth.test.js       # Testes de autenticação
+├── pix.test.js        # Testes do sistema PIX
+├── automovel.test.js  # Testes CRUD automóveis
+├── imovel.test.js     # Testes CRUD imóveis
+└── ...                # Outros módulos
+```
+
+### **Padrão de Teste**
+```javascript
+describe('Módulo X', () => {
+  let token;
+
+  beforeAll(async () => {
+    // Setup: criar usuário e obter token
+    const userRes = await request(app)
+      .post('/api/auth/register')
+      .send(testUser);
+    token = userRes.body.token;
+  });
+
+  test('Operação Y', async () => {
+    const res = await request(app)
+      .post('/api/endpoint')
+      .set('Authorization', `Bearer ${token}`)
+      .send(testData);
+    
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty('expectedField');
+  });
+});
+```
+
+## 📈 Performance e Otimização
+
+### **Database Indexing**
+```javascript
+// Índices recomendados
+UserSchema.index({ email: 1 });
+TransacaoSchema.index({ userId: 1, createdAt: -1 });
+AutomovelSchema.index({ postedBy: 1, createdAt: -1 });
+```
+
+### **Caching Strategy**
+```javascript
+// Headers de cache para recursos estáticos
+app.use('/static', express.static('public', {
+  maxAge: '1d',
+  etag: true
+}));
+```
+
+### **Pagination**
+```javascript
+// Implementar paginação em listagens
+const page = parseInt(req.query.page) || 1;
+const limit = parseInt(req.query.limit) || 10;
+const skip = (page - 1) * limit;
+
+const results = await Model.find()
+  .skip(skip)
+  .limit(limit)
+  .sort({ createdAt: -1 });
+```
+
+## 🔧 Middleware Stack
+
+### **Ordem de Middlewares**
+```javascript
+app.use(securityLogger);        // 1. Logs de segurança
+app.use(securityHeaders);       // 2. Headers de segurança
+app.use(generalRateLimit);      // 3. Rate limiting
+app.use(cors());                // 4. CORS
+app.use(express.json());        // 5. Body parser
+app.use('/api/auth', authRoutes); // 6. Rotas públicas
+app.use('/api/*', authMiddleware); // 7. Rotas protegidas
+app.use(errorHandler);          // 8. Error handler (último)
 ```
 
 ## 🚨 Tratamento de Erros
 
-Todas as respostas de erro seguem o padrão:
-```json
+### **Error Handler Global**
+```javascript
+const errorHandler = (err, req, res, next) => {
+  // Log estruturado
+  console.error('🚨 [ERROR]', {
+    message: err.message,
+    stack: err.stack,
+    url: req.url,
+    method: req.method,
+    ip: req.ip
+  });
+
+  // Resposta padronizada
+  res.status(err.statusCode || 500).json({
+    success: false,
+    error: err.message || 'Erro interno do servidor'
+  });
+};
+```
+
+### **Tipos de Erro Tratados**
+- **ValidationError** → 400 Bad Request
+- **CastError** → 400 Bad Request (ObjectId inválido)
+- **11000** → 400 Bad Request (Duplicação)
+- **JsonWebTokenError** → 401 Unauthorized
+- **TokenExpiredError** → 401 Unauthorized
+
+## 📊 Monitoramento
+
+### **Logs de Segurança**
+```javascript
+// Eventos logados automaticamente
+- Tentativas de autenticação
+- Operações sensíveis
+- Erros 401/403
+- Erros 500+
+- Rate limiting ativado
+```
+
+### **Health Check**
+```javascript
+GET /api/health
 {
-  "message": "Descrição do erro",
-  "error": "Detalhes técnicos (apenas em desenvolvimento)"
+  "status": "Servidor rodando",
+  "timestamp": "2024-01-01T12:00:00.000Z",
+  "uptime": 3600,
+  "memory": { "used": "50MB", "total": "512MB" }
 }
+```
+
+## 🔄 Versionamento da API
+
+### **Estratégia de Versioning**
+- **URL Path**: `/api/v1/endpoint`
+- **Header**: `Accept-Version: v1`
+- **Backward Compatibility**: Manter v1 por 6 meses
+
+### **Changelog**
+- **v1.0.0** - Release inicial
+- **v1.1.0** - Sistema PIX adicionado
+- **v1.2.0** - Melhorias de segurança
+
+## 🚀 Deploy e DevOps
+
+### **Ambientes**
+- **Development** - `NODE_ENV=development`
+- **Staging** - `NODE_ENV=staging`
+- **Production** - `NODE_ENV=production`
+
+### **Variáveis por Ambiente**
+```bash
+# Development
+MONGO_URI=mongodb://localhost:27017/fetin_dev
+JWT_SECRET=dev_secret_key
+
+# Production
+MONGO_URI=mongodb://cluster.mongodb.net/fetin_prod
+JWT_SECRET=super_secure_production_key_32_chars
+```
+
+### **CI/CD Pipeline**
+```yaml
+# .github/workflows/api.yml
+name: API Tests
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+      - run: npm install
+      - run: npm test
+      - run: npm run test:coverage
 ```
 
 ---
 
-**Versão:** 1.0.0  
-**Última atualização:** Janeiro 2024  
-**Desenvolvido para:** FETIN - Instituto Nacional de Telecomunicações
+**Documentação atualizada em:** Janeiro 2024  
+**Versão da API:** v1.2.0  
+**Autor:** Equipe FETIN

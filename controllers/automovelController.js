@@ -12,10 +12,15 @@ exports.getAll = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
-    const automovelData = {
-      ...req.body,
-      postedBy: req.user.id
-    };
+    const allowedFields = ['title', 'description', 'imagesUrls', 'price', 'year', 'mileage', 'color', 'brand', 'model', 'fuelType', 'transmission', 'condition'];
+    const automovelData = { postedBy: req.user.id };
+    
+    allowedFields.forEach(field => {
+      if (req.body[field] !== undefined) {
+        automovelData[field] = req.body[field];
+      }
+    });
+    
     const novo = new Automovel(automovelData);
     const salvo = await novo.save();
 
@@ -40,7 +45,16 @@ exports.getById = async (req, res) => {
 // Atualizar
 exports.update = async (req, res) => {
   try {
-    const atualizado = await Automovel.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const allowedFields = ['title', 'description', 'imagesUrls', 'price', 'year', 'mileage', 'color', 'brand', 'model', 'fuelType', 'transmission', 'condition'];
+    const updateData = {};
+    
+    allowedFields.forEach(field => {
+      if (req.body[field] !== undefined) {
+        updateData[field] = req.body[field];
+      }
+    });
+    
+    const atualizado = await Automovel.findByIdAndUpdate(req.params.id, updateData, { new: true });
     if (!atualizado) return res.status(404).json({ message: 'Automóvel não encontrado' });
     res.json(atualizado);
   } catch (err) {

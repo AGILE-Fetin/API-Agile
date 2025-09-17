@@ -8,8 +8,10 @@ const validatePassword = (password) => {
   return password && password.length >= 6;
 };
 
+const mongoose = require('mongoose');
+
 const validateObjectId = (id) => {
-  return /^[0-9a-fA-F]{24}$/.test(id);
+  return mongoose.Types.ObjectId.isValid(id);
 };
 
 const sanitizeString = (str, maxLength = 1000) => {

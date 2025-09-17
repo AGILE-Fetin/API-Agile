@@ -14,15 +14,15 @@ describe('Rotas de Usuário', () => {
     const res = await request(app)
       .post('/api/auth/register')
       .send({
-        email: 'usuario@teste.com',
-        password: '123456',
+        email: process.env.TEST_EMAIL || 'usuario@teste.com',
+        password: process.env.TEST_PASSWORD || '123456',
         fullName: 'Usuário Teste'
       });
 
     expect(res.statusCode).toBe(201);
     expect(res.body).toHaveProperty('token');
     expect(res.body).toHaveProperty('user');
-    expect(res.body.user).toHaveProperty('email', 'usuario@teste.com');
+    expect(res.body.user).toHaveProperty('email', process.env.TEST_EMAIL || 'usuario@teste.com');
 
     token = res.body.token;
     userId = res.body.user._id;
@@ -32,8 +32,8 @@ describe('Rotas de Usuário', () => {
     const res = await request(app)
       .post('/api/auth/login')
       .send({
-        email: 'usuario@teste.com',
-        password: '123456'
+        email: process.env.TEST_EMAIL || 'usuario@teste.com',
+        password: process.env.TEST_PASSWORD || '123456'
       });
 
     expect(res.statusCode).toBe(200);
@@ -48,7 +48,7 @@ describe('Rotas de Usuário', () => {
 
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty('_id');
-    expect(res.body).toHaveProperty('email', 'usuario@teste.com');
+    expect(res.body).toHaveProperty('email', process.env.TEST_EMAIL || 'usuario@teste.com');
     userId = res.body._id; // Atualizar userId
   });
 

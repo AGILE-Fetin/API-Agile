@@ -10,8 +10,8 @@ router.get('/', controller.getAll);
 router.get('/:id', validateObjectIdParam(), controller.getById);
 
 // Rotas privadas (requerem autenticação)
-router.post('/', autenticarToken, controller.create);
-router.put('/:id', validateObjectIdParam(), autenticarToken, controller.update);
-router.delete('/:id', validateObjectIdParam(), autenticarToken, controller.remove);
+router.post('/', autenticarToken, csrfProtection.validateToken, controller.create);
+router.put('/:id', validateObjectIdParam(), autenticarToken, csrfProtection.validateToken, controller.update);
+router.delete('/:id', validateObjectIdParam(), autenticarToken, csrfProtection.validateToken, controller.remove);
 
 module.exports = router;

@@ -16,6 +16,9 @@ const prestadorRoutes = require('./routes/prestadorRoutes');
 const estrelaRoutes = require('./routes/estrelaRoutes');
 const notificacaoRoutes = require('./routes/notificacaoRoutes');
 const transacaoRoutes = require('./routes/transacaoRoutes');
+const pixRoutes = require('./routes/pixRoutes');
+const errorHandler = require('./middlewares/errorHandler');
+const csrfProtection = require('./middlewares/csrfMiddleware');
 
 dotenv.config();
 connectDB();
@@ -43,13 +46,20 @@ app.use('/api/pedidos', pedidoRoutes);
 app.use('/api/notificacoes', notificacaoRoutes);
 app.use('/api/estrelas', estrelaRoutes);
 app.use('/api/transacoes', transacaoRoutes);
+app.use('/api/pix', pixRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
+
+// Endpoint para obter token CSRF
+app.get('/api/csrf-token', csrfProtection.getToken);
 
 // Rota para checar saúde da API
 app.get('/api/health', (req, res) => {
   res.json({ status: 'Servidor rodando' });
 });
+
+// Middleware global de tratamento de erros (deve ser o último)
+app.use(errorHandler);
 
 // Exporta app para testes
 module.exports = app;

@@ -1,37 +1,57 @@
-# 🏢 FETIN API - Marketplace Platform
+# 🚀 FETIN API - Marketplace Completo
 
-[![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-6.0+-green.svg)](https://www.mongodb.com/)
-[![Tests](https://img.shields.io/badge/Tests-50%20passing-brightgreen.svg)](./tests/)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+API REST completa para marketplace com sistema de pagamentos PIX, autenticação segura e múltiplos módulos.
 
-API RESTful completa para plataforma de marketplace desenvolvida para o Instituto Nacional de Telecomunicações (INATEL).
+## 📋 Índice
 
-## 🚀 Funcionalidades
+- [Funcionalidades](#-funcionalidades)
+- [Tecnologias](#-tecnologias)
+- [Instalação](#-instalação)
+- [Configuração](#-configuração)
+- [Endpoints](#-endpoints)
+- [Autenticação](#-autenticação)
+- [Sistema PIX](#-sistema-pix)
+- [Segurança](#-segurança)
+- [Testes](#-testes)
 
-- 🔐 **Autenticação JWT** - Sistema completo de login/registro
-- 👥 **Gestão de Usuários** - CRUD completo com diferentes perfis
-- 🚗 **Automóveis** - Marketplace de veículos
-- 🏠 **Imóveis** - Plataforma imobiliária
-- 🔧 **Serviços** - Catálogo de serviços
-- 👷 **Prestadores** - Rede de prestadores de serviços
-- 📦 **Pedidos** - Sistema de pedidos e compras
-- 💳 **Transações** - Processamento de pagamentos
-- 🔔 **Notificações** - Sistema de notificações em tempo real
-- ⭐ **Avaliações** - Sistema de reviews e ratings
+## ✨ Funcionalidades
 
-## 📋 Pré-requisitos
+### **Módulos Principais**
+- 🔐 **Autenticação JWT** com middleware de segurança
+- 💳 **Sistema PIX** completo (QR Code + Copiar/Colar)
+- 🚗 **Automóveis** - CRUD completo
+- 🏠 **Imóveis** - Gestão de propriedades
+- 🛠️ **Serviços** - Marketplace de serviços
+- 👥 **Prestadores** - Cadastro de prestadores
+- 📦 **Pedidos** - Sistema de pedidos
+- ⭐ **Avaliações** - Sistema de estrelas
+- 🔔 **Notificações** - Sistema de notificações
+- 💰 **Transações** - Histórico financeiro
 
-- Node.js 18+
-- MongoDB 6.0+
-- npm ou yarn
+### **Recursos de Segurança**
+- 🛡️ **Proteção CSRF** em todas as rotas sensíveis
+- 🔒 **Rate Limiting** para prevenir spam
+- 🚫 **Mass Assignment Protection**
+- ✅ **Validação robusta** de dados
+- 📝 **Logs de segurança** estruturados
+- 🔑 **Headers de segurança** implementados
 
-## ⚡ Instalação Rápida
+## 🛠️ Tecnologias
+
+- **Node.js** + **Express.js**
+- **MongoDB** + **Mongoose**
+- **JWT** para autenticação
+- **bcrypt** para hash de senhas
+- **QRCode** para geração de códigos PIX
+- **Jest** + **Supertest** para testes
+- **CORS** para integração frontend
+
+## 📦 Instalação
 
 ```bash
 # Clone o repositório
-git clone <repository-url>
-cd fetin
+git clone <seu-repositorio>
+cd API
 
 # Instale as dependências
 npm install
@@ -39,231 +59,356 @@ npm install
 # Configure as variáveis de ambiente
 cp .env.example .env
 
-# Inicie o MongoDB
-mongod
-
-# Execute a aplicação
+# Inicie o servidor
 npm start
+
+# Para desenvolvimento (com nodemon)
+npm run dev
 ```
 
-## 🔧 Configuração
+## ⚙️ Configuração
 
-### Variáveis de Ambiente
-
-Crie um arquivo `.env` na raiz do projeto:
-
-```env
+### Arquivo `.env`
+```bash
 # Database
-MONGODB_URI=mongodb://localhost:27017/Agile
-MONGO_URI=mongodb://localhost:27017/Agile
+MONGO_URI=mongodb://localhost:27017/fetin
 
-# JWT
-JWT_SECRET=sua_chave_secreta_super_forte
+# JWT (OBRIGATÓRIO: Use chave forte)
+JWT_SECRET=sua_chave_super_secreta_de_pelo_menos_32_caracteres
 
 # Server
 PORT=5000
 NODE_ENV=development
 FRONTEND_URL=http://localhost:3000
 
-# Test credentials (apenas para testes)
-TEST_EMAIL=test@example.com
-TEST_PASSWORD=testpassword123
+# PIX
+PIX_MERCHANT_NAME=Sua Empresa
+PIX_MERCHANT_CITY=Sua Cidade
+
+# Security
+BCRYPT_ROUNDS=12
+JWT_EXPIRES_IN=7d
+CSRF_ENABLED=true
+
+# Rate Limiting
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX_REQUESTS=100
 ```
 
-### Estrutura do Projeto
+## 🌐 Endpoints
 
+### **Autenticação**
 ```
-fetin/
-├── config/
-│   └── db.js                 # Configuração do MongoDB
-├── controllers/              # Lógica de negócio
-│   ├── authController.js
-│   ├── userController.js
-│   ├── automovelController.js
-│   └── ...
-├── middlewares/              # Middlewares customizados
-│   ├── authMiddleware.js
-│   ├── validationMiddleware.js
-│   └── ...
-├── models/                   # Modelos do MongoDB
-│   ├── User.js
-│   ├── Automovel.js
-│   └── ...
-├── routes/                   # Definição das rotas
-│   ├── authRoutes.js
-│   ├── userRoutes.js
-│   └── ...
-├── tests/                    # Testes automatizados
-│   ├── auth.test.js
-│   ├── user.test.js
-│   └── ...
-├── index.js                  # Arquivo principal da aplicação
-├── server.js                 # Servidor HTTP
-└── package.json
+POST   /api/auth/register     # Registrar usuário
+POST   /api/auth/login        # Login
+GET    /api/auth/profile      # Perfil do usuário
 ```
 
-## 🚀 Scripts Disponíveis
-
-```bash
-# Desenvolvimento
-npm run dev          # Inicia com nodemon (auto-reload)
-npm start           # Inicia em produção
-
-# Testes
-npm test            # Executa todos os testes
-npm run test:basic  # Executa testes básicos
-npm run test:watch  # Executa testes em modo watch
-npm run test:coverage # Executa testes com cobertura
-
-# Utilitários
-npm run lint        # Verifica código (se configurado)
+### **PIX (💳 Novo!)**
+```
+POST   /api/pix/gerar         # Gerar código PIX + QR Code
+GET    /api/pix/status/:id    # Verificar status pagamento
+GET    /api/pix/transacoes    # Listar transações
 ```
 
-## 📚 Documentação da API
+### **Automóveis**
+```
+GET    /api/automoveis        # Listar todos
+POST   /api/automoveis        # Criar (Auth + CSRF)
+GET    /api/automoveis/:id    # Buscar por ID
+PUT    /api/automoveis/:id    # Atualizar (Auth + CSRF)
+DELETE /api/automoveis/:id    # Deletar (Auth + CSRF)
+```
 
-A documentação completa está disponível em [`API_DOCUMENTATION.md`](./API_DOCUMENTATION.md).
+### **Imóveis**
+```
+GET    /api/imoveis           # Listar todos
+POST   /api/imoveis           # Criar (Auth + CSRF)
+GET    /api/imoveis/:id       # Buscar por ID
+PUT    /api/imoveis/:id       # Atualizar (Auth + CSRF)
+DELETE /api/imoveis/:id       # Deletar (Auth + CSRF)
+```
 
-### Endpoints Principais
+### **Serviços**
+```
+GET    /api/servicos          # Listar todos
+POST   /api/servicos          # Criar (Auth + CSRF)
+GET    /api/servicos/:id      # Buscar por ID
+PUT    /api/servicos/:id      # Atualizar (Auth + CSRF)
+DELETE /api/servicos/:id      # Deletar (Auth + CSRF)
+```
 
-| Método | Endpoint | Descrição | Auth |
-|--------|----------|-----------|------|
-| POST | `/api/auth/register` | Registrar usuário | ❌ |
-| POST | `/api/auth/login` | Login | ❌ |
-| GET | `/api/auth/profile` | Perfil do usuário | ✅ |
-| GET | `/api/automoveis` | Listar automóveis | ❌ |
-| POST | `/api/automoveis` | Criar automóvel | ✅ |
-| GET | `/api/imoveis` | Listar imóveis | ❌ |
-| POST | `/api/pedidos` | Criar pedido | ✅ |
+### **Prestadores**
+```
+GET    /api/prestadores       # Listar todos
+POST   /api/prestadores       # Criar (Auth + CSRF)
+GET    /api/prestadores/:id   # Buscar por ID
+PUT    /api/prestadores/:id   # Atualizar (Auth + CSRF)
+DELETE /api/prestadores/:id   # Deletar (Auth + CSRF)
+```
 
-### Exemplo de Uso
+### **Pedidos**
+```
+GET    /api/pedidos           # Listar pedidos do usuário (Auth)
+POST   /api/pedidos           # Criar pedido (Auth + CSRF)
+GET    /api/pedidos/:id       # Buscar por ID (Auth)
+PUT    /api/pedidos/:id       # Atualizar (Auth + CSRF)
+DELETE /api/pedidos/:id       # Deletar (Auth + CSRF)
+```
 
+### **Avaliações**
+```
+GET    /api/estrelas          # Listar avaliações (Auth)
+POST   /api/estrelas          # Criar avaliação (Auth + CSRF)
+GET    /api/estrelas/:id      # Buscar por ID (Auth)
+PUT    /api/estrelas/:id      # Atualizar (Auth + CSRF)
+DELETE /api/estrelas/:id      # Deletar (Auth + CSRF)
+```
+
+### **Notificações**
+```
+GET    /api/notificacoes      # Listar notificações (Auth)
+POST   /api/notificacoes      # Criar notificação (Auth + CSRF)
+PUT    /api/notificacoes/:id  # Marcar como lida (Auth + CSRF)
+DELETE /api/notificacoes/:id  # Deletar (Auth + CSRF)
+```
+
+### **Transações**
+```
+GET    /api/transacoes        # Listar transações (Auth)
+POST   /api/transacoes        # Criar transação (Auth + CSRF)
+GET    /api/transacoes/:id    # Buscar por ID (Auth)
+```
+
+### **Utilitários**
+```
+GET    /api/health            # Status da API
+GET    /api/csrf-token        # Obter token CSRF
+```
+
+## 🔐 Autenticação
+
+### **Registro**
 ```javascript
-// Registrar usuário
-const response = await fetch('http://localhost:5000/api/auth/register', {
+POST /api/auth/register
+{
+  "email": "usuario@exemplo.com",
+  "password": "senha123",
+  "fullName": "Nome Completo"
+}
+```
+
+### **Login**
+```javascript
+POST /api/auth/login
+{
+  "email": "usuario@exemplo.com",
+  "password": "senha123"
+}
+
+// Response
+{
+  "token": "jwt_token_aqui",
+  "user": {
+    "_id": "user_id",
+    "email": "usuario@exemplo.com",
+    "fullName": "Nome Completo",
+    "roles": ["cliente"]
+  }
+}
+```
+
+### **Usar Token**
+```javascript
+// Headers para rotas protegidas
+{
+  "Authorization": "Bearer jwt_token_aqui",
+  "Content-Type": "application/json"
+}
+```
+
+## 💳 Sistema PIX
+
+### **Gerar PIX**
+```javascript
+// 1. Obter token CSRF
+const csrfRes = await fetch('/api/csrf-token');
+const { csrfToken } = await csrfRes.json();
+
+// 2. Gerar PIX
+const response = await fetch('/api/pix/gerar', {
   method: 'POST',
   headers: {
+    'Authorization': 'Bearer ' + token,
     'Content-Type': 'application/json',
+    'X-CSRF-Token': csrfToken
   },
   body: JSON.stringify({
-    email: 'usuario@exemplo.com',
-    password: 'senha123',
-    fullName: 'João Silva'
+    valor: 150.75,
+    descricao: 'Pagamento produto',
+    chavePix: '11999999999'
   })
 });
 
-const { token, user } = await response.json();
+const pixData = await response.json();
+```
 
-// Usar token para requisições autenticadas
-const automoveis = await fetch('http://localhost:5000/api/automoveis', {
-  headers: {
-    'Authorization': `Bearer ${token}`
+### **Response PIX**
+```javascript
+{
+  "transacaoId": "1758141173002",
+  "codigoPix": "000201010212...",        // Código para copiar
+  "qrCode": "data:image/png;base64...",  // QR Code em base64
+  "valor": 150.75,
+  "descricao": "Pagamento produto",
+  "chavePix": "11999999999",
+  "merchantName": "FETIN Marketplace",
+  "merchantCity": "Santa Rita do Sapucai",
+  "status": "pendente",
+  "createdAt": "2024-01-01T12:00:00.000Z"
+}
+```
+
+### **Copiar Código PIX**
+```javascript
+// Função para copiar código
+const copiarPix = async (codigoPix) => {
+  try {
+    await navigator.clipboard.writeText(codigoPix);
+    alert('✅ Código PIX copiado!');
+  } catch (error) {
+    // Fallback para navegadores antigos
+    const textArea = document.createElement('textarea');
+    textArea.value = codigoPix;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textArea);
+    alert('✅ Código PIX copiado!');
   }
-});
+};
+```
+
+## 🛡️ Segurança
+
+### **Proteção CSRF**
+```javascript
+// Todas as rotas POST/PUT/DELETE requerem token CSRF
+const csrfRes = await fetch('/api/csrf-token');
+const { csrfToken } = await csrfRes.json();
+
+// Usar em headers
+headers: {
+  'X-CSRF-Token': csrfToken
+}
+```
+
+### **Rate Limiting**
+- **100 requests** por 15 minutos por IP
+- Aplicado automaticamente (exceto em testes)
+
+### **Validações Implementadas**
+- ✅ **ObjectId** do MongoDB
+- ✅ **Email** formato válido
+- ✅ **Senha** mínimo 6 caracteres
+- ✅ **Dados financeiros** (PIX/Transações)
+- ✅ **Mass Assignment** prevenção
+
+### **Headers de Segurança**
+```javascript
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+X-XSS-Protection: 1; mode=block
+Content-Security-Policy: default-src 'self'
 ```
 
 ## 🧪 Testes
 
-O projeto possui uma suíte completa de testes automatizados:
-
+### **Executar Testes**
 ```bash
-# Executar todos os testes
+# Todos os testes
 npm test
 
-# Resultado esperado:
-# ✅ 11 suites de teste
-# ✅ 50 testes passando
-# ✅ 0 testes falhando
+# Testes específicos
+npm test -- auth.test.js
+npm test -- pix.test.js
+
+# Com coverage
+npm run test:coverage
+
+# Watch mode
+npm run test:watch
 ```
 
-### Cobertura de Testes
+### **Cobertura de Testes**
+- ✅ **Autenticação** (registro, login, perfil)
+- ✅ **PIX** (geração, validação, status)
+- ✅ **CRUD** completo (todos os módulos)
+- ✅ **Validações** de erro
+- ✅ **Segurança** (CSRF, auth)
 
-- ✅ Autenticação (registro, login, perfil)
-- ✅ Usuários (CRUD completo)
-- ✅ Automóveis (CRUD completo)
-- ✅ Imóveis (CRUD completo)
-- ✅ Serviços (CRUD completo)
-- ✅ Prestadores (CRUD completo)
-- ✅ Pedidos (CRUD completo)
-- ✅ Transações (CRUD completo)
-- ✅ Notificações (CRUD completo)
-- ✅ Avaliações (CRUD completo)
+## 📊 Status dos Módulos
 
-## 🔒 Segurança
-
-- **JWT Authentication**: Tokens seguros para autenticação
-- **Rate Limiting**: Proteção contra ataques de força bruta
-- **CORS**: Configurado para origens específicas
-- **Helmet**: Headers de segurança HTTP
-- **Validação**: Validação rigorosa de dados de entrada
-- **Sanitização**: Proteção contra injeção de código
+| Módulo | Status | Testes | Segurança |
+|--------|--------|--------|-----------|
+| 🔐 Auth | ✅ | ✅ | ✅ |
+| 💳 PIX | ✅ | ✅ | ✅ |
+| 🚗 Automóveis | ✅ | ✅ | ✅ |
+| 🏠 Imóveis | ✅ | ✅ | ✅ |
+| 🛠️ Serviços | ✅ | ✅ | ✅ |
+| 👥 Prestadores | ✅ | ✅ | ✅ |
+| 📦 Pedidos | ✅ | ✅ | ✅ |
+| ⭐ Avaliações | ✅ | ✅ | ✅ |
+| 🔔 Notificações | ✅ | ✅ | ✅ |
+| 💰 Transações | ✅ | ✅ | ✅ |
 
 ## 🚀 Deploy
 
-### Desenvolvimento Local
+### **Variáveis de Produção**
 ```bash
-npm run dev
+NODE_ENV=production
+MONGO_URI=mongodb://seu-mongo-producao
+JWT_SECRET=chave_super_secreta_producao_32_chars
+FRONTEND_URL=https://seu-dominio.com
 ```
 
-### Produção
+### **Comandos**
 ```bash
-# Definir NODE_ENV
-export NODE_ENV=production
+# Build (se necessário)
+npm run build
 
-# Iniciar aplicação
+# Start em produção
 npm start
+
+# PM2 (recomendado)
+pm2 start server.js --name "fetin-api"
 ```
 
-### Docker (Opcional)
-```dockerfile
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY . .
-EXPOSE 5000
-CMD ["npm", "start"]
-```
+## 📚 Documentação Adicional
+
+- 📄 [PIX_GUIDE.md](./PIX_GUIDE.md) - Guia completo do sistema PIX
+- 🔒 [SECURITY.md](./SECURITY.md) - Políticas de segurança
+- 📖 [API_DOCUMENTATION.md](./API_DOCUMENTATION.md) - Documentação detalhada
+- 💡 [EXAMPLES.md](./EXAMPLES.md) - Exemplos de uso
 
 ## 🤝 Contribuição
 
 1. Fork o projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
+2. Crie uma branch (`git checkout -b feature/nova-funcionalidade`)
+3. Commit suas mudanças (`git commit -m 'Adiciona nova funcionalidade'`)
+4. Push para a branch (`git push origin feature/nova-funcionalidade`)
 5. Abra um Pull Request
 
-### Padrões de Código
+## 📝 Licença
 
-- Use ESLint para manter consistência
-- Escreva testes para novas funcionalidades
-- Mantenha a documentação atualizada
-- Siga os padrões REST para APIs
-
-## 📊 Status do Projeto
-
-- ✅ **Backend API**: Completo e funcional
-- ✅ **Autenticação**: JWT implementado
-- ✅ **Banco de Dados**: MongoDB configurado
-- ✅ **Testes**: 100% dos endpoints testados
-- ✅ **Documentação**: Completa e atualizada
-- 🔄 **Frontend**: Em desenvolvimento
-- 🔄 **Deploy**: Preparando para produção
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para detalhes.
 
 ## 📞 Suporte
 
-Para dúvidas ou suporte:
-
-- 📧 Email: suporte@inatel.br
-- 📚 Documentação: [`API_DOCUMENTATION.md`](./API_DOCUMENTATION.md)
-- 🐛 Issues: [GitHub Issues](./issues)
-
-## 📄 Licença
-
-Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
+- 📧 Email: suporte@fetin.com
+- 📱 WhatsApp: (35) 99999-9999
+- 🌐 Site: https://fetin.com
 
 ---
 
-**Desenvolvido com ❤️ para o Instituto Nacional de Telecomunicações (INATEL)**
-
-**Versão:** 1.0.0  
-**Última atualização:** Janeiro 2024
+**FETIN API v1.0.0** - Marketplace completo com sistema PIX integrado 🚀
